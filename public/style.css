@@ -1,5 +1,17 @@
 /* CSS Document */
 
+#charts {
+    float: left;
+}
+
+#charts rect {
+    fill: steelblue;
+}
+
+#charts text {
+    fill: black;
+}
+
 .clearfix:before,
 .container:after {
 		content: " ";
