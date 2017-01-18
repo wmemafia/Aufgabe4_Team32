@@ -1,1 +1,5 @@
-# Aufgabe4_Team32
+Team 32
+-------
+
+Michael Schneider    
+Christoph Kepler

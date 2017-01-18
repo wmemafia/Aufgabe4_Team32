@@ -1,0 +1,149 @@
+/* CSS Document */
+
+.clearfix:before,
+.container:after {
+		content: " ";
+		display: table;
+}
+.clearfix:after {
+		clear: both;
+}
+.clearfix {
+		zoom: 1;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font: normal normal 400 14px/145% "Roboto", Tahoma, Geneva, "Trebuchet MS", Helvetica, sans-serif;
+	padding: 0 0 5em 0;
+}
+
+h1 {
+	font: normal normal 300 3em/140% "Roboto", Tahoma, Geneva, "Trebuchet MS", Helvetica, sans-serif;
+	margin: 1em 0 .5em;
+}
+
+a {
+	color: #6bc32d;
+}
+
+a:hover {
+	color: #3f7c14;
+	text-decoration: none;
+}
+
+
+.container {
+	margin: 0 auto;
+	width: 1170px;
+	max-width: 100%;
+}
+
+div.container section {
+	margin-top: 120px;
+}
+
+header {
+	background-color: #333333;
+	background: linear-gradient(to bottom, #d0d0d0 0%,#f0f0f0 100%);
+	border-bottom: 1px solid #ccc;
+	color: #333;
+	height: 80px;
+	width: 100%;
+	position: absolute;
+	top: 0;
+}
+
+header.fixed {
+	position: fixed;
+	top: 0;
+}
+
+header > nav {
+	width: 100%;
+	position: relative;
+}
+
+header > nav a {
+	background-color: transparent;
+	color: #666;
+	display: block;
+	height: 80px;
+	line-height: 100px;
+	padding: 0 1em;
+	text-decoration: none;
+	transition: 250ms background-color linear;
+}
+
+header > nav > ul > li:hover > a,
+header > nav a:hover {
+	background-color: #ccc;
+	color: #1a1a1a;
+}
+
+header > nav > ul > li.active > a,
+header > nav > ul > li.active:hover > a,
+header > nav .active a:hover {
+	background-color: #666;
+	color: #f0f0f0;
+}
+
+header > nav a > i {
+	font-size: 1.5em;
+	margin-right: .25em;
+}
+
+header > nav > .logo {
+	background: transparent url("world_data_logo.png") no-repeat 0 0%;
+	float: left;
+	font-size: 2em;
+	font-weight: 500;
+	line-height: 1000px;
+	margin-right: 2em;
+	overflow: hidden;
+	width: 150px;
+}
+
+header > nav > .logo:hover {
+	background-color: transparent;
+	background-position: 0 -80px;
+}
+
+header > nav > ul {
+	float: left;
+	list-style: none none inside;
+	margin: 0;
+	padding: 0;
+	display: block;
+}
+
+header > nav > ul > li {
+	border-right: 1px solid #ccc;
+	display: inline-block;
+	float: left;
+}
+
+header > nav > ul > li:first-child {
+	border-left: 1px solid #ccc;
+}
+
+footer > .container {
+	border-top: 1px solid #6bc32d;
+	color: #666;
+	font-size: .9em;
+	margin-top: 5em;
+	padding: 1em 0;
+}
+
+footer > .container > div {
+	float: left;
+	width: 48%;
+}
+
+footer > .container > div.right {
+	float: right;
+	text-align: right;
+}
