@@ -14,9 +14,9 @@ d3.csv("world_data.csv", function(data) {
 // ideas from https://bost.ocks.org/mike/bar/ and next pages
 function createChart(parentElement) {
     
-    var margin = {top: 20, right: 30, bottom: 30, left: 40};
+    var margin = {top: 20, right: 30, bottom: 150, left: 40};
     var width = 600 - margin.left - margin.right;
-    var height = 500 - margin.top - margin.bottom;
+    var height = 300 - margin.top - margin.bottom;
     
     
     // load options into select 
@@ -33,14 +33,12 @@ function createChart(parentElement) {
     var data = countries.map(function(el) {return {name: el.name, value: parseFloat(el[selectedOption]) }; })
     
     var x = d3.scaleBand()
-        .rangeRound([0, width]);
+        .rangeRound([0, width])
+        .padding(0.1);
     
     var y = d3.scaleLinear()
         .range([height, 0]);
     
-    var xAxis = d3.axisBottom();
-    
-    var yAxis = d3.axisLeft();
     
     var chart = parentElement.select("svg")
         .attr("width", width + margin.left + margin.right)
@@ -48,23 +46,31 @@ function createChart(parentElement) {
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     
-    chart.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
-    
-    chart.append("g")
-        .attr("class", "y axis")
-        .call(yAxis);
+    x.domain(data.map(function(d) { return d.name; }));
+    y.domain([0, d3.max(data, function(d) { return d.value})]);
     
     chart.selectAll(".bar")
-        .ata(data)
-      .enter().appemd("rect")
+        .data(data)
+      .enter().append("rect")
         .attr("class", "bar")
         .attr("x", function(d) { return x(d.name); })
+        .attr("width", x.bandwidth())
         .attr("y", function(d) { return y(d.value); })
-        .attr("height", function(d) { return height - y(d.value); })
-        .attr("width", x.rangeBand());
+        .attr("height", function(d) { return height - y(d.value); });
+    
+    
+    chart.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+            .selectAll("text")
+            .attr("style", null)
+            .attr("dy", "-.25em")
+            .attr("dx", ".8em")
+            .attr("transform", "rotate(90)")
+            .style("text-anchor", "start");
+    
+    chart.append("g")
+        .call(d3.axisLeft(y));
     
         
     
