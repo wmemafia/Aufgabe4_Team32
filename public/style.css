@@ -12,6 +12,10 @@
     fill: black;
 }
 
+#map { 
+    height: 540px; 
+}
+
 .clearfix:before,
 .container:after {
 		content: " ";

@@ -6,6 +6,9 @@ var margin = {top: 20, right: 30, bottom: 150, left: 45};
 var width = 600 - margin.left - margin.right;
 var height = 300 - margin.top - margin.bottom;
 
+var map;
+var markers = [];
+
 //load data from csv
 d3.csv("world_data.csv", function(data) {
     countries = data;
@@ -14,6 +17,7 @@ d3.csv("world_data.csv", function(data) {
     
     createChart(d3.select("#charts #chart2"));
     
+    initMap();
 });
 
 // ideas from https://bost.ocks.org/mike/bar/ and next pages and https://bl.ocks.org/d3noob/bdf28027e0ce70bd132edc64f1dd7ea4
@@ -33,6 +37,7 @@ function createChart(parentElement) {
         .on("change", function() {
                                     selectedOption = this.options[this.selectedIndex].value;
                                     updateChart(chart);
+				    updateMarker();
                                 })
         .selectAll("option")
         .data(options)
@@ -107,5 +112,39 @@ function updateChart(chart) {
 
 
 
+function initMap() {
+	// taken from https://switch2osm.org/using-tiles/getting-started-with-leaflet/
+	map = new L.map('map');
+
+	// create the tile layer with correct attribution
+	var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+	var osmAttrib = 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+	var osm = new L.TileLayer(osmUrl, {minZoom: 1, maxZoom: 10, attribution: osmAttrib});
+	
+	map.setView(new L.LatLng(0, 30), 2);
+	map.addLayer(osm);
+	
+	updateMarker();
+}
 
 
+var markerIcon = L.Icon.extend({
+	options: {
+		iconSize: [20, 20],
+		iconAnchor: [10, 20],
+		popupAnchor: [0, -20]
+	}
+});
+
+var defaultMarker = new markerIcon({iconUrl: 'map-marker.svg'});
+
+
+
+function updateMarker() {
+	markers = [];
+	countries.forEach(function(value, index, array) {
+		var currentMarker = L.marker([value["gps_lat"], value["gps_long"] ], {icon: defaultMarker}).addTo(map);
+		currentMarker.bindPopup(selectedOption + "<br /> for " + value["name"] + ": <br />" + value[selectedOption]);
+		markers.push(currentMarker);
+	});
+}
