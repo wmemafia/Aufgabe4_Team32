@@ -8,6 +8,7 @@ var height = 300 - margin.top - margin.bottom;
 
 var map;
 var markers = [];
+var activeElementId = 0;
 
 //load data from csv
 d3.csv("world_data.csv", function(data) {
@@ -53,7 +54,7 @@ function createChart(parentElement) {
 
 function updateChart(chart) {
     // load data
-    var data = countries.map(function(el) {return {name: el.name, value: parseFloat(el[selectedOption]) }; })
+    var data = countries.map(function(el) {return {name: el.name, value: parseFloat(el[selectedOption]), id: el.id }; });
     
     // set the ranges
     var x = d3.scaleBand()
@@ -70,13 +71,27 @@ function updateChart(chart) {
     var bars = chart.selectAll(".bar")
         .data(data);
     
+    //graph prefix for distinct ids (id of chart div)
+    var prefix = chart.node().parentNode.parentNode.id;
+    
     // append rectancgles for the chart
    bars.enter().append("rect")
         .attr("class", "bar")
         .attr("x", function(d) { return x(d.name); })
         .attr("width", x.bandwidth())
         .attr("y", function(d) { return y(d.value); })
-        .attr("height", function(d) { return height - y(d.value); });
+        .attr("height", function(d) { return height - y(d.value); })
+        .attr("id", function(d) { return prefix + "_"+ d.id; })
+        .on("mouseover", function(d) {
+            activeElementId = d.id;
+            setMarkerActive();
+            setBarActive(this.id);
+        })
+        .on("mouseout", function(){
+            activeElementId = 0;
+            resetMarker();
+            resetBar();
+        });
     
     bars.exit().remove();
     
@@ -106,6 +121,26 @@ function updateChart(chart) {
         .call(d3.axisLeft(y));
 }
 
+
+function setBarActive(id) {
+    countries.forEach(function(value) {
+        if(value["id"] == activeElementId) {
+            if(id) {
+                d3.select("#" + id).style("fill", "red");
+            }else {
+                d3.select("#chart1_" + value["id"]).style("fill", "red");
+                d3.select("#chart2_" + value["id"]).style("fill", "red");    
+            }  
+        }
+    });
+}
+
+function resetBar() {
+    countries.forEach(function(value) {
+        d3.select("#chart1_" + value["id"]).style("fill", null);
+        d3.select("#chart2_" + value["id"]).style("fill", null);
+    })
+}
 
 
 
@@ -137,6 +172,7 @@ var markerIcon = L.Icon.extend({
 });
 
 var defaultMarker = new markerIcon({iconUrl: 'map-marker.svg'});
+var activeMarker = new markerIcon({iconUrl: 'map-marker_active.svg'});
 
 
 
@@ -145,6 +181,30 @@ function updateMarker() {
 	countries.forEach(function(value, index, array) {
 		var currentMarker = L.marker([value["gps_lat"], value["gps_long"] ], {icon: defaultMarker}).addTo(map);
 		currentMarker.bindPopup(selectedOption + "<br /> for " + value["name"] + ": <br />" + value[selectedOption]);
+        currentMarker.on('mouseover', function() {
+            activeElementId = countries[markers.indexOf(this)]["id"];
+            setMarkerActive();
+            setBarActive(null);
+        });
+        currentMarker.on('mouseout', function() {
+            activeElementId = 0;
+            resetMarker();
+            resetBar();
+        })
 		markers.push(currentMarker);
 	});
+}
+
+function setMarkerActive() {
+    countries.forEach(function( value, index) {
+        if(value["id"] == activeElementId) {
+            markers[index].setIcon(activeMarker);
+        }        
+    }); 
+}
+
+function resetMarker() {
+    countries.forEach(function(value, index) {
+        markers[index].setIcon(defaultMarker);
+    });
 }
